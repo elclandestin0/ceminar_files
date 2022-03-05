@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract SeminarNFT is ERC721 {
+
+    address public owner;
     
     uint public tokenId = 0;
     
@@ -13,10 +15,20 @@ contract SeminarNFT is ERC721 {
     // contract URi folder (bonus)
     string private _contractURI = "ipfs://QmRqerzgDbidKwNW8h24PQRfKbtqSns3FSwLWSWnLtkrnP";
 
-    constructor() ERC721("Seminar NFT", "SEM") {}
+    address public we_are_studios = 0xCBAb6505F1521029278c2382c1De3B46102cB1B6;
 
-    function mint() public {
+    constructor() ERC721("Seminar NFT", "SEM") {
+        owner = msg.sender;
+    }
+
+    function mint() public payable {
+        require(msg.value == 0.08 ether, "You don't have money!");
         _mint(msg.sender, ++tokenId);
+    }
+
+    function liquidate() public {
+        require(owner == msg.sender, "Only the owner can send funds");
+        payable(we_are_studios).transfer(address(this).balance);
     }
 
     function contractURI() public view returns (string memory) {
